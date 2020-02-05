@@ -1,19 +1,32 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, Menu } from 'electron'
+import { app, autoUpdater, protocol, BrowserWindow, Menu, dialog } from 'electron'
 import {
-  createProtocol,
-  installVueDevtools
+  createProtocol
 } from 'vue-cli-plugin-electron-builder/lib'
-const isDevelopment = process.env.NODE_ENV !== 'production'
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
+const isDevelopment = process.env.NODE_ENV !== 'production'
+const server = 'https://app-cobranca-electron.now.sh/'
+const feed = `${server}/update/${process.platform}/${app.getVersion()}`
+
+autoUpdater.setFeedURL(feed)
+
+setInterval(() => {
+  autoUpdater.checkForUpdates()
+}, 6000)
+
 let win
 
 Menu.setApplicationMenu(null)
 // Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }])
+protocol.registerSchemesAsPrivileged([
+  {
+    scheme: 'app',
+    privileges: {
+      secure: true,
+      standard: true
+    }
+  }])
 
 function createWindow() {
   // Create the browser window.
@@ -60,20 +73,27 @@ app.on('activate', () => {
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
   if (isDevelopment && !process.env.IS_TEST) {
-    // Install Vue Devtools
-    // Devtools extensions are broken in Electron 6.0.0 and greater
-    // See https://github.com/nklayman/vue-cli-plugin-electron-builder/issues/378 for more info
-    // Electron will not launch with Devtools extensions installed on Windows 10 with dark mode
-    // If you are not using Windows 10 dark mode, you may uncomment these lines
-    // In addition, if the linked issue is closed, you can upgrade electron and uncomment these lines
-    // try {
-    //   await installVueDevtools()
-    // } catch (e) {
-    //   console.error('Vue Devtools failed to install:', e.toString())
-    // }
-
   }
   createWindow()
+})
+
+autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
+  const dialogOpts = {
+    type: 'info',
+    buttons: ['Restart', 'Later'],
+    title: 'Aplication Update',
+    message: process.platform === 'win32' ? releaseNotes : releaseName,
+    detail: 'Uma nova versão está disponível. Reinicie para instalar'
+  }
+  dialog.showMessageBox(dialogOpts)
+    .then((returnValue) => {
+      if (returnValue === 0) autoUpdater.quitAndInstall()
+    })
+})
+
+autoUpdater.on('error', message => {
+  console.error('Erro ao atualizar o aplicativo')
+  console.error(message)
 })
 
 // Exit cleanly on request from parent process in development mode.

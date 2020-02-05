@@ -2,6 +2,11 @@
   "name": "electron",
   "version": "0.1.0",
   "private": true,
+  "author": {
+    "email": "eduardo.yugan@gmail.com",
+    "name": "Eduardo Fernandes",
+    "url": "https://app-cobranca-electron.now.sh/"
+  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",

@@ -8,7 +8,7 @@
               <v-icon>mdi-view-dashboard-outline</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-              <v-list-item-title>Home</v-list-item-title>
+              <v-list-item-title>Início</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item to="clients" color="primary">
