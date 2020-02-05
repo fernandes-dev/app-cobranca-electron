@@ -5,12 +5,13 @@ import {
   createProtocol
 } from 'vue-cli-plugin-electron-builder/lib'
 
-const autoUpdater = require('electron-updater')
+const { autoUpdater } = require('electron-updater')
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const server = 'https://app-cobranca-electron.now.sh'
 const feed = `${server}/update/${process.platform}/${app.getVersion()}`
 
 let win
+
 autoUpdater.setFeedURL(feed)
 
 Menu.setApplicationMenu(null)

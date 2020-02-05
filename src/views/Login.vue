@@ -29,8 +29,8 @@
                     @click="login()"
                   >
                     <div color="white">Entrar</div>
-                    <small>versão 0.0.1</small>
                   </v-btn>
+                    <small>versão 0.1.1</small>
                 </v-card-text>
                 <v-spacer></v-spacer>
                 <v-spacer></v-spacer>
