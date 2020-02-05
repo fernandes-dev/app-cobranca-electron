@@ -1,21 +1,17 @@
 'use strict'
 
-import { app, autoUpdater, protocol, BrowserWindow, Menu, dialog } from 'electron'
+import { app, protocol, BrowserWindow, Menu, dialog } from 'electron'
 import {
   createProtocol
 } from 'vue-cli-plugin-electron-builder/lib'
 
+const autoUpdater = require('electron-updater')
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const server = 'https://app-cobranca-electron.now.sh'
 const feed = `${server}/update/${process.platform}/${app.getVersion()}`
 
-autoUpdater.setFeedURL(feed)
-
-setInterval(() => {
-  autoUpdater.checkForUpdates()
-}, 6000)
-
 let win
+autoUpdater.setFeedURL(feed)
 
 Menu.setApplicationMenu(null)
 // Scheme must be registered before the app is ready
@@ -51,6 +47,28 @@ function createWindow() {
   })
 }
 
+autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
+  const dialogOpts = {
+    type: 'info',
+    buttons: ['Restart', 'Later'],
+    title: 'Aplication Update',
+    message: process.platform === 'win32' ? releaseNotes : releaseName,
+    detail: 'Uma nova versão está disponível. Reinicie para instalar'
+  }
+  dialog.showMessageBox(dialogOpts)
+    .then((returnValue) => {
+      alert('nova versão disponível')
+      if (returnValue === 0) autoUpdater.quitAndInstall()
+    })
+})
+
+autoUpdater.on('error', message => {
+  alert('Erro ao atualizar o app')
+  alert(message)
+  console.error('Erro ao atualizar o aplicativo')
+  console.error(message)
+})
+
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
@@ -72,29 +90,15 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
+  autoUpdater.checkForUpdates()
   if (isDevelopment && !process.env.IS_TEST) {
   }
   createWindow()
 })
 
-autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
-  const dialogOpts = {
-    type: 'info',
-    buttons: ['Restart', 'Later'],
-    title: 'Aplication Update',
-    message: process.platform === 'win32' ? releaseNotes : releaseName,
-    detail: 'Uma nova versão está disponível. Reinicie para instalar'
-  }
-  dialog.showMessageBox(dialogOpts)
-    .then((returnValue) => {
-      if (returnValue === 0) autoUpdater.quitAndInstall()
-    })
-})
-
-autoUpdater.on('error', message => {
-  console.error('Erro ao atualizar o aplicativo')
-  console.error(message)
-})
+setInterval(() => {
+  autoUpdater.checkForUpdates()
+}, 6000)
 
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
