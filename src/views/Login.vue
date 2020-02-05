@@ -28,7 +28,7 @@
                     class="mb-2"
                     @click="login()"
                   >
-                    <div color="white">Login</div>
+                    <div color="white">Entrar</div>
                   </v-btn>
                 </v-card-text>
                 <v-spacer></v-spacer>
