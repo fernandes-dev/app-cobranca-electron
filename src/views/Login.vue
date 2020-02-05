@@ -28,7 +28,8 @@
                     class="mb-2"
                     @click="login()"
                   >
-                    <div color="white">Login</div>
+                    <div color="white">Entrar</div>
+                    <small>versão 0.0.1</small>
                   </v-btn>
                 </v-card-text>
                 <v-spacer></v-spacer>
