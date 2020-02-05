@@ -6,7 +6,7 @@ import {
 } from 'vue-cli-plugin-electron-builder/lib'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
-const server = 'https://app-cobranca-electron.now.sh/'
+const server = 'https://app-cobranca-electron.now.sh'
 const feed = `${server}/update/${process.platform}/${app.getVersion()}`
 
 autoUpdater.setFeedURL(feed)
